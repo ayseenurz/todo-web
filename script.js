@@ -1,52 +1,92 @@
-const addBtn = document.getElementById("addBtn");
 const taskInput = document.getElementById("taskInput");
+const addBtn = document.getElementById("addBtn");
 const taskList = document.getElementById("taskList");
+const emptyMessage = document.getElementById("emptyMessage");
 
-addBtn.addEventListener("click", function() {
-  const taskText = taskInput.value.trim();
+// Sayfa açıldığında görevleri yükle
+window.addEventListener("DOMContentLoaded", () => {
+  const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  savedTasks.forEach((task) =>
+    addTaskToDOM(task.id, task.text, task.completed)
+  );
+  updateListVisibility();
+});
 
-  if (taskText === "") {
-    alert("Lütfen bir görev yazın!");
-    return;
-  }
+// Enter ile ekleme
+taskInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") addBtn.click();
+});
 
-  // li oluştur
-  const li = document.createElement("li");
-  li.textContent = taskText;
+// Görev ekleme
+addBtn.addEventListener("click", () => {
+  const text = taskInput.value.trim();
+  if (text === "") return;
 
-  // silme butonu ekle
-  const deleteBtn = document.createElement("span");
-  deleteBtn.textContent = "❌";
-  deleteBtn.classList.add("deleteBtn");
-
-  deleteBtn.addEventListener("click", function(event) {
-    event.stopPropagation(); // silerken tamamlandı olmasın
-    li.remove();
-
-    // Liste boş kaldıysa gizle
-    if (taskList.children.length === 0) {
-      taskList.style.display = "none";
-    }
-  });
-
-  // göreve tıklayınca tamamlandı olarak işaretle
-  li.addEventListener("click", function() {
-    li.classList.toggle("completed");
-  });
-
-  li.appendChild(deleteBtn);
-  taskList.appendChild(li);
-
-  // input’u temizle
+  const id = Date.now(); // benzersiz ID
+  addTaskToDOM(id, text, false);
+  saveTask(id, text, false);
   taskInput.value = "";
-
-  // Listeyi görünür yap
-  taskList.style.display = "block";
+  updateListVisibility();
 });
 
-// Enter tuşu ile görev ekleme
-taskInput.addEventListener("keypress", function(event) {
-  if (event.key === "Enter") {
-    addBtn.click();
+// DOM'a görev ekleme
+function addTaskToDOM(id, text, completed) {
+  const li = document.createElement("li");
+  li.dataset.id = id;
+  const span = document.createElement("span");
+  span.textContent = text;
+  if (completed) li.classList.add("completed");
+
+  // Tamamlama
+  span.addEventListener("click", () => {
+    li.classList.toggle("completed");
+    updateTask(id, li.classList.contains("completed"));
+  });
+
+  // Silme
+  const delBtn = document.createElement("button");
+  delBtn.textContent = "X";
+  delBtn.className = "deleteBtn";
+  delBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    li.remove();
+    deleteTask(id);
+    updateListVisibility();
+  });
+
+  li.appendChild(span);
+  li.appendChild(delBtn);
+  taskList.appendChild(li);
+}
+
+// LocalStorage işlemleri
+function saveTask(id, text, completed) {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks.push({ id, text, completed });
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function updateTask(id, completed) {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  const updatedTasks = tasks.map((task) =>
+    task.id === id ? { ...task, completed } : task
+  );
+  localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+}
+
+function deleteTask(id) {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  const filtered = tasks.filter((task) => task.id !== id);
+  localStorage.setItem("tasks", JSON.stringify(filtered));
+}
+
+// Listeyi gizle/göster
+function updateListVisibility() {
+  if (taskList.children.length === 0) {
+    taskList.style.display = "none";
+    emptyMessage.style.display = "block";
+  } else {
+    taskList.style.display = "block";
+    emptyMessage.style.display = "none";
   }
-});
+}
