@@ -2,6 +2,13 @@ const taskInput = document.getElementById("taskInput");
 const addBtn = document.getElementById("addBtn");
 const taskList = document.getElementById("taskList");
 const emptyMessage = document.getElementById("emptyMessage");
+const allBtn = document.getElementById("allBtn");
+const activeBtn = document.getElementById("activeBtn");
+const completedBtn = document.getElementById("completedBtn");
+
+allBtn.addEventListener("click", () => filterTasks("all"));
+activeBtn.addEventListener("click", () => filterTasks("active"));
+completedBtn.addEventListener("click", () => filterTasks("completed"));
 
 // Sayfa açıldığında görevleri yükle
 window.addEventListener("DOMContentLoaded", () => {
@@ -89,4 +96,20 @@ function updateListVisibility() {
     taskList.style.display = "block";
     emptyMessage.style.display = "none";
   }
+}
+
+function filterTasks(filter) {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  taskList.innerHTML = ""; // listeyi temizle
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "all") return true;
+    if (filter === "active") return task.completed === false;
+    if (filter === "completed") return task.completed === true;
+  });
+
+  filteredTasks.forEach((task) =>
+    addTaskToDOM(task.id, task.text, task.completed)
+  );
+  updateListVisibility();
 }

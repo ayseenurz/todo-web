@@ -1,24 +1,70 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
-  margin-top: 200px;
+  margin-top: 100px;
   text-align: center;
-  background-color: #749ec7;
+  background: linear-gradient(to right, #74c7ec, #6a91d8);
+  color: #333;
 }
 
-input,
-button {
-  padding: 20px;
+input {
+  padding: 10px;
   font-size: 16px;
+  width: 250px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  outline: none;
 }
 
-#taskList {
+input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+button {
+  padding: 10px 20px;
+  margin-left: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+#filters {
+  margin-top: 20px;
+}
+
+#filters button {
+  margin: 5px;
+  padding: 6px 12px;
+  font-size: 14px;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  border-radius: 5px;
+  border: 1px solid #bdc3c7;
+  transition: all 0.3s ease;
+}
+
+#filters button:hover {
+  background-color: #3498db;
+  color: white;
+  border-color: #2980b9;
+}
+
+ul#taskList {
   list-style: none;
-  padding: 5px;
+  padding: 10px;
   width: 400px;
   margin: 20px auto 0;
   border-radius: 10px;
-  background-color: aliceblue;
-  display: none; /* başta gizli */
+  background-color: #ecf0f1;
+  display: none;
 }
 
 li {
@@ -27,6 +73,14 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 6px 10px;
+  border-radius: 5px;
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+li:hover {
+  background-color: #dfe6e9;
 }
 
 li.completed span {
@@ -35,17 +89,21 @@ li.completed span {
 }
 
 .deleteBtn {
-  margin-left: 10px;
   color: red;
   cursor: pointer;
   background: none;
   border: none;
   font-size: 16px;
+  transition: color 0.2s ease;
+}
+
+.deleteBtn:hover {
+  color: #c0392b;
 }
 
 #emptyMessage {
   color: white;
-  font-size: 20px;
+  font-size: 18px;
   font-style: italic;
   margin-top: 20px;
 }
